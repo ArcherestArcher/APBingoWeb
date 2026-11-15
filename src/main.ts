@@ -50,7 +50,6 @@ viewport.addEventListener('wheel', (e) => {
         const delta = -e.deltaY * 0.001;
         scale += delta;
 
-        // 👇 THIS is the important part
         scale = Math.max(minScale, Math.min(scale, 2.5));
 
         applyZoom();

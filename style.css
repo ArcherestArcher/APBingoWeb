@@ -203,6 +203,49 @@
 }
 
 /* ==============================
+   Theme: Christmas
+============================== */
+[data-theme="christmas"] {
+    /* === Base === */
+    --bg-primary: #241216;
+    --bg-secondary: #351a20;
+    --bg-elevated: #48232a;
+    --border-subtle: #76505a;
+    --border-accent: #477454;
+    --text-primary: #f5eadf;
+    --text-secondary: #dbc5bd;
+    /* === Accent === */
+    --accent: #d7b66c;
+    --accent-hover: #efd18a;
+    --accent-glow: rgba(215, 182, 108, 0.2);
+    /* === Header / Chrome === */
+    --header-bg: #183b29;
+    --counter-bg: #351a20;
+    --counter-border: ##76505a;
+    /* === Panel === */
+    --panel-bg: rgba(39, 18, 23, 0.94);
+    /* === Squares === */
+    --square-bg: #28533b;
+    --square-header-bg: #39704b;
+    --square-header-text: #f0f5fa;
+    --square-body-text: #d5e8d9;
+    /* === Received / Completed === */
+    --received-bg: #8f353d;
+    --received-header-bg: #b84b52;
+    /* === Fog of War === */
+    --fog-bg: rgba(20, 8, 12, 0.7);
+    --fog-border: rgba(130, 75, 82, 0.35);
+    --fog-header-bg: rgba(255, 255, 255, 0.03);
+    --fog-header-text: rgba(190, 150, 150, 0.35);
+    /* === Starred === */
+    --starred-border: #e8bd62;
+    --starred-glow: rgba(232, 189, 98, 0.35);
+    /* === Search Highlight === */
+    --search-color: #e2b26a;
+    --search-glow: rgba(255, 255, 255, 1);
+}
+
+/* ==============================
    Global Reset & Base Styles
 ============================== */
 *, *::before, *::after {
