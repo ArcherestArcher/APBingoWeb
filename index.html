@@ -14,6 +14,18 @@
     <!-- Sticky Header with Player Search -->
     <header id="stickyHeader">
         <span id="bingoCounter">0/0 Goal</span>
+
+        <div id="sessionTimer" class ="hidden">
+            <span id="tempTimer" title="Until Next Play!">
+                <span class="temp-timer__icon">⏱</span>
+                <span id="temp-timer-text" class="temp-timer__text">--:--</span>
+                <span class="temp-timer__track">
+                    <span id="temp-timer-bar" class="temp-timer__bar"></span>
+                </span>
+            </span>
+            <button id="renewButton" type="button" disabled>⏱ Ready!</button>
+        </div>
+
         <input type="text" id="playerSearch" placeholder="Search player..." />
         <button id="muteButton" aria-label="Toggle sound">🔊</button>
     </header>

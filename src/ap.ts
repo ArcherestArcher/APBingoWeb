@@ -1,6 +1,8 @@
 import { Client } from "archipelago.js";
 import fanfareSound from './assets/sounds/fanfare.wav';
 import victorySound from './assets/sounds/victory.mp3';
+import { initialiseCookies, resetTempCookie } from "./cookies";
+
 export type HintData = {
     itemName: string;
     name: string;
@@ -16,7 +18,8 @@ export type BingoSlotData = {
     startSquare: string;
     autoHints: boolean;
     hintData: HintData[];
-    additionalBingos?: string[];
+    additionalBingos: string[];
+    minigameMania?: boolean;
 };
 
 /* ==============================
@@ -26,9 +29,18 @@ export async function connectToAP<T>(host: string, port: number, slot: string, p
 
     sentBingos.clear();
     const client = new Client();
+    pendingMinigameChecks.clear();
     const hostport = `${host}:${port}`;
     //Sign in to AP server
     const slotdata = await client.login<BingoSlotData>(hostport, slot, "APBingo", {password});
+
+    document.getElementById("sessionTimer").classList.toggle("hidden", !slotdata.minigameMania);
+
+    initialiseCookies({slotName: slot, slot: Number(port)},() => {
+        sendNextMinigameReward(client, slotdata.boardSize);
+    }
+);
+
     return { client, slotdata };
 }
 
@@ -65,6 +77,43 @@ muteButton.addEventListener('click', () => {
     // Update UI
     muteButton.textContent = isMuted ? '🔇' : '🔊';
 });
+
+
+const pendingMinigameChecks = new Set<number>();
+
+export function sendNextMinigameReward(client: Client, boardSize: number) {
+    const bingoPackage = client.package.findPackage("APBingo");
+
+    // Get Bingo Datapackage
+    if (!bingoPackage) {
+        console.error("APBingo data package not found!");
+        return;
+    }
+
+    const checked = new Set([
+        ...client.room.checkedLocations,
+        ...pendingMinigameChecks
+    ]);
+
+
+    // Search for the next available location in the minigame rewards and send it out
+    for (let i = 1; i <= boardSize ** 2; i++) {
+        const locationName = `Minigame Reward #${i}`;
+        const locationID = bingoPackage.locationTable[locationName];
+
+        if (locationID === undefined) {
+            console.error(`Location not found: ${locationName}`);
+            return;
+        }
+
+        if (!checked.has(locationID)) {
+            pendingMinigameChecks.add(locationID);
+            client.check(locationID);
+
+            return;
+        }
+    }
+}
 
 export function getChecks(
     squares: Set<string>,

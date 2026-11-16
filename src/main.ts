@@ -86,7 +86,13 @@ setupMenu(async (host, port, slot, password) => {
 
         const updateSquaresAndCheck = () => {
 
-            const receivedSquares = new Set(client.items.received.map(item => item.name));
+            const receivedSquares = new Set(client.items.received.map(item => {
+                
+                const match = item.name.match(/^Free Square: ([A-Z]+\d+)$/);
+                return match ? match[1] : item.name;
+            }));  
+
+            console.log(receivedSquares)
 
             // Update board UI
             receivedSquares.forEach(setReceived);
@@ -302,7 +308,12 @@ document.querySelectorAll<HTMLButtonElement>(".panel-section-header").forEach(he
 // ==============================
 //   Text Client
 // ==============================
+
+let cleanupTextClient: (() => void) | null = null;
+
 function setupTextClient(client: Client) {
+
+    cleanupTextClient?.();
     const loginSection = document.getElementById("loginSection")!;
     const textClientSection = document.getElementById("textClientSection")!;
     const log = document.getElementById("textClientLog")!;
@@ -330,11 +341,10 @@ function setupTextClient(client: Client) {
     }
 
     // Listen for all incoming messages
-    client.messages.on("message", (text) => {
+    const onMessage = (text: string) => {
         appendMessage(text);
-    });
+    };
 
-    // Send message on button click
     const sendMessage = () => {
         const text = input.value.trim();
         if (!text) return;
@@ -342,13 +352,20 @@ function setupTextClient(client: Client) {
         input.value = "";
     };
 
-    sendBtn.addEventListener("click", sendMessage);
-
-    // Send message on Enter key
-    input.addEventListener("keydown", (e) => {
+    const onKeyDown = (e: KeyboardEvent) => {
         if (e.key === "Enter") {
             e.preventDefault();
             sendMessage();
         }
-    });
+    };
+
+    client.messages.on("message", onMessage);
+    sendBtn.addEventListener("click", sendMessage);
+    input.addEventListener("keydown", onKeyDown);
+
+    cleanupTextClient = () => {
+        client.messages.off("message", onMessage);
+        sendBtn.removeEventListener("click", sendMessage);
+        input.removeEventListener("keydown", onKeyDown);
+    };
 }
