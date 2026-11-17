@@ -305,7 +305,6 @@ body {
 }
 
 #sessionTimer {
-    position: relative;
     display: inline-flex;
 }
 
@@ -353,12 +352,7 @@ body {
     }
 
 #renewButton {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
+    padding: 4px 12px;
     font-size: 13px;
     font-family: inherit;
     font-weight: 600;
@@ -369,17 +363,11 @@ body {
     border: 1px solid var(--accent);
     border-radius: 20px;
     cursor: pointer;
-    opacity: 1;
-    transition: background-color 0.15s ease, opacity 0.3s ease;
+    transition: background-color 0.15s ease;
 }
 
-    #renewButton:hover:not(:disabled) {
+    #renewButton:hover {
         background: var(--accent-hover);
-    }
-
-    #renewButton:disabled {
-        opacity: 0;
-        pointer-events: none;
     }
 
 /* ==============================
@@ -706,6 +694,254 @@ body {
     width: fit-content;
 }
 
+/* ==============================
+    Minigame Sections
+============================== */
+
+#hubToggle {
+    padding: 4px 12px;
+    font-size: 13px;
+    font-family: inherit;
+    font-weight: 600;
+    color: var(--text-primary);
+    background: var(--counter-bg);
+    border: 1px solid var(--counter-border);
+    border-radius: 20px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.15s ease;
+}
+
+    #hubToggle:hover {
+        background: var(--accent-glow);
+    }
+
+#minigameHub {
+    display: flex;
+    gap: 16px;
+    padding: 16px;
+    height: calc(100vh - 65px);
+}
+
+    #minigameHub.hidden {
+        display: none;
+        margin-top: 0;
+    }
+
+#gameList {
+    flex: 0 0 260px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 8px;
+    overflow-y: auto;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+}
+
+    #gameList::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    #gameList::-webkit-scrollbar-thumb {
+        background: var(--border-accent);
+        border-radius: 3px;
+    }
+
+.game-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 12px;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    color: var(--text-secondary);
+    background: var(--square-bg);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+}
+    .game-item:hover {
+        color: var(--text-primary);
+        border-color: var(--border-accent);
+    }
+
+    .game-item.active {
+        color: var(--text-primary);
+        border-color: var(--accent);
+        background: var(--accent-glow);
+    }
+
+.game-item__badge {
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-secondary);
+}
+
+#gameArea {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+#gameStage {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    justify-content: center;
+}
+
+#gameFrame {
+    position: relative;
+    height: 100%;
+    max-width: 100%;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+}
+
+#gamePlaceholder {
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+#gameStats {
+    flex: 0 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 8px 12px;
+    background: var(--counter-bg);
+    border: 1px solid var(--counter-border);
+    border-radius: 10px;
+}
+
+.stat__label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-secondary);
+}
+
+.stat__value {
+    font-size: 18px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-primary);
+}
+
+@media (max-width: 700px) {
+    #minigameHub {
+        flex-direction: column;
+    }
+
+    #gameList {
+        flex: 0 0 140px;
+    }
+}
+
+.cell-grid {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(var(--grid), minmax(0, 1fr));
+    grid-template-rows: repeat(var(--grid), minmax(0, 1fr));
+    gap: 0;
+    padding: 8px;
+}
+
+.cell {
+    position: relative;
+    min-width: 0;
+    min-height: 0;
+    padding: 0;
+    font-family: inherit;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--text-primary);
+    background: var(--square-bg);
+    border: none;
+    border-radius: 0;
+    box-shadow: inset 3px 3px 0 rgba(255, 255, 255, 0.35), inset -3px -3px 0 rgba(0, 0, 0, 0.45);
+    cursor: pointer;
+}
+
+    .cell:hover:not(.flagged):not(.revealed) {
+        background: var(--square-header-bg);
+    }
+
+    .cell:active:not(.flagged):not(.revealed) {
+        background: var(--accent);
+        box-shadow: inset 2px 2px 0 rgba(0, 0, 0, 0.45);
+    }
+
+    .cell.revealed {
+        background: var(--bg-secondary);
+        box-shadow: inset 1px 1px 0 rgba(0, 0, 0, 0.5);
+        cursor: default;
+    }
+
+    .cell.flagged {
+        cursor: not-allowed;
+    }
+
+    .cell__flag {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 80%;
+        height: 80%;
+        transform: translate(-50%, -50%);
+        object-fit: contain;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .cell__mine {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 70%;
+        height: 70%;
+        transform: translate(-50%, -50%);
+        object-fit: contain;
+        image-rendering: pixelated;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .cell.exploded {
+        background: #e53935;
+    }
+
+    .cell[data-n="1"] { color: #4a7dff; }
+    .cell[data-n="2"] { color: #3fae4a; }
+    .cell[data-n="3"] { color: #e5484d; }
+    .cell[data-n="4"] { color: #8b5cf6; }
+    .cell[data-n="5"] { color: #c2410c; }
+    .cell[data-n="6"] { color: #14b8a6; }
+    .cell[data-n="7"] { color: #e5e5e5; }
+    .cell[data-n="8"] { color: #9ca3af; }
 
 /* ==============================
    Row/Column Headers

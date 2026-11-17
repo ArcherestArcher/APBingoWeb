@@ -33,13 +33,13 @@ export async function connectToAP<T>(host: string, port: number, slot: string, p
     const hostport = `${host}:${port}`;
     //Sign in to AP server
     const slotdata = await client.login<BingoSlotData>(hostport, slot, "APBingo", {password});
+     
+    activeClient = client;
+    activeBoardSize = slotdata.boardSize;
 
     document.getElementById("sessionTimer").classList.toggle("hidden", !slotdata.minigameMania);
 
-    initialiseCookies({slotName: slot, slot: Number(port)},() => {
-        sendNextMinigameReward(client, slotdata.boardSize);
-    }
-);
+    initialiseCookies({ slotName: slot, slot: Number(port) });
 
     return { client, slotdata };
 }
@@ -79,9 +79,23 @@ muteButton.addEventListener('click', () => {
 });
 
 
+
+let activeClient: Client | null = null;
+let activeBoardSize = 0;
+
+
 const pendingMinigameChecks = new Set<number>();
 
-export function sendNextMinigameReward(client: Client, boardSize: number) {
+export function sendNextMinigameReward() {
+
+    if (!activeClient) {
+        console.warn("sendNextMinigameReward called before connecting");
+        return;
+    }
+
+    const client = activeClient;
+    const boardSize = activeBoardSize;
+
     const bingoPackage = client.package.findPackage("APBingo");
 
     // Get Bingo Datapackage

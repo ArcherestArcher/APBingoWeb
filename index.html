@@ -23,8 +23,9 @@
                     <span id="temp-timer-bar" class="temp-timer__bar"></span>
                 </span>
             </span>
-            <button id="renewButton" type="button" disabled>⏱ Ready!</button>
         </div>
+
+        <button id="renewButton" type="button">Play!</button>
 
         <input type="text" id="playerSearch" placeholder="Search player..." />
         <button id="muteButton" aria-label="Toggle sound">🔊</button>
@@ -112,6 +113,34 @@
             <div id="zoomLayer">
                 <div id="bingoContainer"></div>
             </div>
+
+            <section id="minigameHub" class="hidden">
+                <nav id="gameList" aria-label="Minigames"></nav>
+
+                <div id="gameArea">
+                    <div id="gameStage">
+                        <div id="gameFrame">
+                            <span id="gamePlaceholder">Select a game</span>
+                        </div>
+                    </div>
+
+                    <div id="gameStats">
+                        <div class="stat">
+                            <span class="stat__label">Goal Score</span>
+                            <span id="statGoal" class="stat__value">-</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat__label">High Score</span>
+                            <span id="statHigh" class="stat__value">-</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat__label">Dev Score</span>
+                            <span id="statDev" class="stat__value">-</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
         </div>
     </main>
 

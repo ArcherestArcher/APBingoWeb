@@ -1,5 +1,4 @@
-﻿
-const LOGIN_DURATION = 30 * 24 * 60 * 60; // 30 days
+﻿const LOGIN_DURATION = 30 * 24 * 60 * 60; // 30 days
 const TEMP_DURATION = 1 * 60; // 10 minutes
 
 // Player information
@@ -7,6 +6,8 @@ interface PlayerInfo {
     slotName: string;
     slot: number;
 }
+
+let currentPlayer: PlayerInfo | null = null;
 
 // Cookie helpers
 function setCookie(name: string, value: string, duration: number): void {
@@ -40,25 +41,30 @@ function generatePlayerID(player: PlayerInfo): string {
 }
 
 // Initialise player cookies
-export function initialiseCookies(player: PlayerInfo, sendMinigameReward: () => void) {
+export function initialiseCookies(player: PlayerInfo) {
+    currentPlayer = player;
+
     const id = generatePlayerID(player);
 
     const loginCookie = `apbingo_login_${id}`;
     const tempCookie = `apbingo_temp_${id}`;
 
-
     // If unique login id cookie doesn't exist, create it
     if (!getCookie(loginCookie)) {
         setCookie(loginCookie, Date.now().toString(), LOGIN_DURATION);
-        
+
         // Create temp cookie on initial log-in
         if (!getCookie(tempCookie)) {
-        setCookie(tempCookie, Date.now().toString(), TEMP_DURATION);
-        }   
+            setCookie(tempCookie, Date.now().toString(), TEMP_DURATION);
+        }
     }
 
-    startTempTimer(player, document.getElementById("temp-timer-text")!, document.getElementById("temp-timer-bar")!, document.getElementById("renewButton") as HTMLButtonElement, sendMinigameReward);
-
+    startTempTimer(
+        player,
+        document.getElementById("temp-timer-text")!,
+        document.getElementById("temp-timer-bar")!,
+        document.getElementById("renewButton") as HTMLButtonElement
+    );
 
     return {
         id,
@@ -79,15 +85,13 @@ export function getTempRemainingMs(player: PlayerInfo): number {
     return Math.max(0, created + TEMP_DURATION * 1000 - Date.now());
 }
 
-
 let activeTimerInterval: number | null = null;
 
 export function startTempTimer(
     player: PlayerInfo,
     textEl: HTMLElement,
     barEl: HTMLElement,
-    buttonEl: HTMLButtonElement,
-    sendMinigameReward: () => void
+    buttonEl: HTMLButtonElement
 ): () => void {
     if (activeTimerInterval !== null) {
         clearInterval(activeTimerInterval);
@@ -101,20 +105,12 @@ export function startTempTimer(
         const secs = totalSeconds % 60;
 
         textEl.textContent = `${mins}:${secs.toString().padStart(2, "0")}`;
-        buttonEl.disabled = ms > 0;
 
         const fraction = ms / (TEMP_DURATION * 1000);
         barEl.style.width = `${fraction * 100}%`;
         barEl.classList.toggle("warn", fraction <= 0.25 && fraction > 0.1);
         barEl.classList.toggle("low", fraction <= 0.1);
     }
-
-    buttonEl.onclick = () => {
-
-        sendMinigameReward();
-        resetTempCookie(player);
-        update();
-    };
 
     update();
     activeTimerInterval = window.setInterval(update, 1000);
@@ -133,4 +129,15 @@ export function resetTempCookie(player: PlayerInfo): void {
     const tempCookie = `apbingo_temp_${id}`;
 
     setCookie(tempCookie, Date.now().toString(), TEMP_DURATION);
+}
+
+// Reset the temp cookie for whoever logged in most recently
+export function resetCurrentTempCookie(): void {
+    if (!currentPlayer) return;
+    resetTempCookie(currentPlayer);
+}
+
+export function hasCurrentTempCookie(): boolean {
+    if (!currentPlayer) return false;
+    return getCookie(`apbingo_temp_${generatePlayerID(currentPlayer)}`) !== null;
 }

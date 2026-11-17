@@ -4,6 +4,9 @@ import { createBoard, restoreSquareText } from "./board";
 import { Client } from "archipelago.js";
 import APLogo from './assets/icons/APLogo.png';
 import { Hint } from "archipelago.js";
+import { initMinigameHub } from "./minigames/minigames";
+
+initMinigameHub();
 
 (document.head.querySelector("link[rel=icon]") as HTMLLinkElement || document.head.appendChild(Object.assign(document.createElement("link"), { rel: "icon" })) as HTMLLinkElement).href = APLogo;
 
@@ -91,8 +94,6 @@ setupMenu(async (host, port, slot, password) => {
                 const match = item.name.match(/^Free Square: ([A-Z]+\d+)$/);
                 return match ? match[1] : item.name;
             }));  
-
-            console.log(receivedSquares)
 
             // Update board UI
             receivedSquares.forEach(setReceived);
