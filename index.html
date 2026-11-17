@@ -7,14 +7,27 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <title>Archipelago Bingo</title>
-  <script type="module" crossorigin src="/APBingoWeb/assets/index-C9MBs_xp.js"></script>
-  <link rel="stylesheet" crossorigin href="/APBingoWeb/assets/index-B_Jdn4Bn.css">
+  <script type="module" crossorigin src="/APBingoWeb/assets/index-a3SKBG0k.js"></script>
+  <link rel="stylesheet" crossorigin href="/APBingoWeb/assets/index-BM0GFjgA.css">
 </head>
 <body>
 
     <!-- Sticky Header with Player Search -->
     <header id="stickyHeader">
         <span id="bingoCounter">0/0 Goal</span>
+
+        <div id="sessionTimer" class ="hidden">
+            <span id="tempTimer" title="Until Next Play!">
+                <span class="temp-timer__icon">⏱</span>
+                <span id="temp-timer-text" class="temp-timer__text">--:--</span>
+                <span class="temp-timer__track">
+                    <span id="temp-timer-bar" class="temp-timer__bar"></span>
+                </span>
+            </span>
+        </div>
+
+        <button id="renewButton" type="button">Play!</button>
+
         <input type="text" id="playerSearch" placeholder="Search player..." />
         <button id="muteButton" aria-label="Toggle sound">🔊</button>
     </header>
@@ -101,6 +114,34 @@
             <div id="zoomLayer">
                 <div id="bingoContainer"></div>
             </div>
+
+            <section id="minigameHub" class="hidden">
+                <nav id="gameList" aria-label="Minigames"></nav>
+
+                <div id="gameArea">
+                    <div id="gameStage">
+                        <div id="gameFrame">
+                            <span id="gamePlaceholder">Select a game</span>
+                        </div>
+                    </div>
+
+                    <div id="gameStats">
+                        <div class="stat">
+                            <span class="stat__label">Goal Score</span>
+                            <span id="statGoal" class="stat__value">-</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat__label">High Score</span>
+                            <span id="statHigh" class="stat__value">-</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat__label">Dev Score</span>
+                            <span id="statDev" class="stat__value">-</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
         </div>
     </main>
 
