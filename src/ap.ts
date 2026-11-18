@@ -2,7 +2,7 @@ import { Client } from "archipelago.js";
 import fanfareSound from './assets/sounds/fanfare.wav';
 import victorySound from './assets/sounds/victory.mp3';
 import { initialiseCookies, resetTempCookie } from "./cookies";
-
+import { setDeathLinkEnabled } from "./deathlink.ts"
 export type HintData = {
     itemName: string;
     name: string;
@@ -20,6 +20,7 @@ export type BingoSlotData = {
     hintData: HintData[];
     additionalBingos: string[];
     minigameMania?: boolean;
+    deathLink?: boolean;
 };
 
 /* ==============================
@@ -40,6 +41,8 @@ export async function connectToAP<T>(host: string, port: number, slot: string, p
     document.getElementById("sessionTimer").classList.toggle("hidden", !slotdata.minigameMania);
 
     initialiseCookies({ slotName: slot, slot: Number(port) });
+
+    setDeathLinkEnabled(client, slotdata.minigameMania ?? false, slotdata.deathLink ?? false)
 
     return { client, slotdata };
 }
