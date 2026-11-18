@@ -3,7 +3,7 @@ import { snakeGame } from "./snake";
 import { minesweeperGame } from "./minesweeper"
 import { resetCurrentTempCookie, hasCurrentTempCookie } from "../cookies";
 import { sendNextMinigameReward } from "../ap.ts";
-import { sendDeathLink } from "../deathlink.ts";
+import { sendDeathLinks } from "../deathlink.ts";
 
 const HUB_BUTTON_ID = "renewButton";
 
@@ -61,15 +61,13 @@ function onGameLost(game: Minigame, score: number, win: boolean): void {
     }
 
     if (!hasCurrentTempCookie()) {
-
         if (meetsGoal(game, score) && win) {
       
             // If the cookie doesn't exist, send minigame reward
             sendNextMinigameReward()
         }
-
         else{
-            sendDeathLink("Was Bad At Games")
+            sendDeathLinks("Was Bad At Games")
         }
         // Reset the cookie on loss regardless, allows freeplay but only sends square if timer is over
         resetCurrentTempCookie();
