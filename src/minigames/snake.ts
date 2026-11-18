@@ -122,7 +122,7 @@ export const snakeGame: Minigame = {
             if (hitWall || hitSelf) {
                 state = "over";
                 playSound(loseSound)
-                onGameLost?.(score);
+                onGameLost?.(score, true);
                 draw();
                 return;
             }

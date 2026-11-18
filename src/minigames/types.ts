@@ -8,7 +8,7 @@
     lowerIsBetter?: boolean;
     start?: (
         container: HTMLElement,
-        onGameLost?: (score: number) => void,
+        onGameLost?: (score: number, win: boolean) => void,
         onGoalReached?: () => void
     ) => (() => void) | void;
 }

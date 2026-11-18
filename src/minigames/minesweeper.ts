@@ -185,7 +185,7 @@ export const minesweeperGame: Minigame = {
 
             playSound(time <= minesweeperGame.devScore ? devScoreSound : scoreSound);
 
-            onGameLost?.(time);
+            onGameLost?.(time, true);
         }
 
 
@@ -217,6 +217,7 @@ export const minesweeperGame: Minigame = {
             hit.classList.add("exploded");
             revealMines();
             playSound(loseSound);
+            onGameLost?.(0, false);
         }
 
         function onClick(e: MouseEvent): void {

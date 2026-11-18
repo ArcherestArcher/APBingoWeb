@@ -48,21 +48,24 @@ function updateStats(game: Minigame | null): void {
     document.getElementById("statHigh")!.textContent = game ? formatScore(game, game.highScore) : "-";
     document.getElementById("statDev")!.textContent = game ? formatScore(game, game.devScore) : "-";
 }
-function onGameLost(game: Minigame, score: number): void {
+function onGameLost(game: Minigame, score: number, win: boolean): void {
 
     // Check high score based on score format
-    if (isNewHighScore(game, score)) {
+
+    if(win){
+        if (isNewHighScore(game, score)) {
         game.highScore = score;
         updateStats(game);
+        }
     }
 
     if (!hasCurrentTempCookie()) {
 
-        if (meetsGoal(game, score)) {
+        if (meetsGoal(game, score) && win) {
+      
             // If the cookie doesn't exist, send minigame reward
             sendNextMinigameReward()
         }
-
         // Reset the cookie on loss regardless, allows freeplay but only sends square if timer is over
         resetCurrentTempCookie();
     }
@@ -81,7 +84,7 @@ function selectGame(game: Minigame): void {
     updateStats(game);
 
     if (game.start) {
-        stopGame = game.start(frameEl, score => onGameLost(game, score));
+        stopGame = game.start(frameEl, (score, win) => onGameLost(game, score, win));
     } else {
         const msg = document.createElement("span");
         msg.id = "gamePlaceholder";
