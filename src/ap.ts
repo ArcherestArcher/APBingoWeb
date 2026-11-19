@@ -1,4 +1,4 @@
-import { Client } from "archipelago.js";
+import { Client, type NetworkHint } from "archipelago.js";
 import fanfareSound from './assets/sounds/fanfare.wav';
 import victorySound from './assets/sounds/victory.mp3';
 import { initialiseCookies, resetTempCookie } from "./cookies";
@@ -81,15 +81,13 @@ muteButton.addEventListener('click', () => {
     muteButton.textContent = isMuted ? '🔇' : '🔊';
 });
 
-
-
 let activeClient: Client | null = null;
 let activeBoardSize = 0;
-
 
 const pendingMinigameChecks = new Set<number>();
 
 export function sendNextMinigameReward() {
+
 
     if (!activeClient) {
         console.warn("sendNextMinigameReward called before connecting");
@@ -126,10 +124,48 @@ export function sendNextMinigameReward() {
         if (!checked.has(locationID)) {
             pendingMinigameChecks.add(locationID);
             client.check(locationID);
+            useFreeHint(activeClient) // Create free hint!
 
             return;
         }
     }
+}
+
+const MINIGAME_PREFIX = "Minigame Reward #";
+
+async function useFreeHint(client: Client): Promise<void> {
+    const self = client.players.self;
+
+    // Don't hint found locations or minigame locations
+    const checked = new Set(client.room.checkedLocations);
+    const unfound = client.room.allLocations.filter(
+        (id) =>
+            !checked.has(id) &&
+            !client.package.lookupLocationName(client.game, id).startsWith(MINIGAME_PREFIX)
+    );
+
+    if (unfound.length === 0) {
+        return;
+    }
+
+    // Don't hint previously hinted locations
+    const raw = await client.storage.fetch(`_read_hints_${self.team}_${self.slot}`);
+    const hints = Array.isArray(raw) ? (raw as NetworkHint[]) : [];
+    const hinted = new Set(
+        hints.filter((h) => h.finding_player === self.slot).map((h) => h.location)
+    );
+
+    const candidates = unfound.filter((id) => !hinted.has(id));
+
+    // If there are no more good hint candidates, give up!
+    if (candidates.length === 0) {
+        return;
+    }
+
+    // Creat new hints only
+    const pick = candidates[Math.floor(Math.random() * candidates.length)];
+    if (pick === undefined) return;
+    client.scout([pick], 2);
 }
 
 export function getChecks(

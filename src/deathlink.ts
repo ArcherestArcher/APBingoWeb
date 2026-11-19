@@ -1,12 +1,15 @@
 import type { Client } from "archipelago.js";
-import { resetCurrentTempCookie } from "./cookies";
-
 
 let enabled = false;
 let client: Client | null = null;
 
 let receivingDeath = false;
 let listening = false;
+
+let onDeathReceived: () => void = () => {};
+export function setDeathReceivedHandler(fn: () => void): void {
+    onDeathReceived = fn;
+}
 
 export function setDeathLinkEnabled(cl: Client, mini: boolean | null | undefined, value: boolean | null | undefined): void {
     client = cl;
@@ -20,7 +23,9 @@ export function setDeathLinkEnabled(cl: Client, mini: boolean | null | undefined
 
                 receivingDeath = true;
                 try {
-                    resetCurrentTempCookie();
+
+                    console.log("deathReceived from", source);
+                    onDeathReceived();
                 } finally {
                 receivingDeath = false;
             }
@@ -29,8 +34,7 @@ export function setDeathLinkEnabled(cl: Client, mini: boolean | null | undefined
     }
 
 }
-
 export function sendDeathLinks(cause?: string): void {
-    if (!enabled || !client) return;
+    if (!enabled || !client || receivingDeath) return;
     client.deathLink.sendDeathLink(client.players.self.name, cause);
 }

@@ -102,6 +102,12 @@ export const snakeGame: Minigame = {
             return container.offsetParent !== null;
         }
 
+        function die(): void {
+            state = "over";
+            playSound(loseSound);
+            onGameLost?.(score, true);
+            draw();
+        }
 
         // Game Loop (120ms)
         function tick(): void {
@@ -120,14 +126,12 @@ export const snakeGame: Minigame = {
 
             // Game Over!
             if (hitWall || hitSelf) {
-                state = "over";
-                playSound(loseSound)
-                onGameLost?.(score, true);
-                draw();
+                die();
                 return;
             }
                         
             // Move snake by adding head and removing tail
+
             snake.unshift(head);
 
             if (eating) {
@@ -250,7 +254,10 @@ export const snakeGame: Minigame = {
 
         reset();
 
+        snakeGame.kill = () => {if (state === "playing") die();};
+
         return () => {
+            snakeGame.kill = undefined;
             window.removeEventListener("keydown", onKeyDown);
             clearInterval(interval);
         };

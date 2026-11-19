@@ -212,9 +212,9 @@ export const minesweeperGame: Minigame = {
             });
         }
 
-        function loseGame(hit: HTMLButtonElement): void {
+        function loseGame(hit?: HTMLButtonElement): void {
             state = "over";
-            hit.classList.add("exploded");
+            hit?.classList.add("exploded");
             revealMines();
             playSound(loseSound);
             onGameLost?.(0, false);
@@ -281,7 +281,10 @@ export const minesweeperGame: Minigame = {
 
         reset();
 
+        minesweeperGame.kill = () => {if (state === "playing") loseGame();};
+
         return () => {
+            minesweeperGame.kill = undefined;
             grid.removeEventListener("click", onClick);
             grid.removeEventListener("contextmenu", onContextMenu);
             grid.remove();
