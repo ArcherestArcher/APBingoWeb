@@ -6,6 +6,7 @@
     devScore: number;
     scoreType?: "number" | "time";
     lowerIsBetter?: boolean;
+    kill?: () => void;
     start?: (
         container: HTMLElement,
         onGameLost?: (score: number, win: boolean) => void,

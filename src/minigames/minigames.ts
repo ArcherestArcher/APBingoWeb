@@ -3,7 +3,7 @@ import { snakeGame } from "./snake";
 import { minesweeperGame } from "./minesweeper"
 import { resetCurrentTempCookie, hasCurrentTempCookie } from "../cookies";
 import { sendNextMinigameReward } from "../ap.ts";
-import { sendDeathLinks } from "../deathlink.ts";
+import { sendDeathLinks, setDeathReceivedHandler } from "../deathlink.ts";
 
 const HUB_BUTTON_ID = "renewButton";
 
@@ -17,7 +17,7 @@ let zoomLayer: HTMLElement;
 let toggleButton: HTMLElement;
 let listEl: HTMLElement;
 let frameEl: HTMLElement;
-
+let activeGame: Minigame | null = null;
 let stopGame: (() => void) | void = undefined;
 
 
@@ -67,6 +67,8 @@ function onGameLost(game: Minigame, score: number, win: boolean): void {
             sendNextMinigameReward()
         }
         else{
+
+            console.log("Uh oh!")
             sendDeathLinks("Was Bad At Games")
         }
         // Reset the cookie on loss regardless, allows freeplay but only sends square if timer is over
@@ -87,8 +89,10 @@ function selectGame(game: Minigame): void {
     updateStats(game);
 
     if (game.start) {
+        activeGame = game;
         stopGame = game.start(frameEl, (score, win) => onGameLost(game, score, win));
     } else {
+        activeGame = null;
         const msg = document.createElement("span");
         msg.id = "gamePlaceholder";
         msg.textContent = game.name;
@@ -118,6 +122,13 @@ function toggleHub(): void {
     hub.classList.toggle("hidden", !showHub);
     zoomLayer.classList.toggle("hidden", showHub);
 }
+function handleDeathLink(): void {
+    if (activeGame?.kill) {
+        activeGame.kill();
+    } else {
+        resetCurrentTempCookie();
+    }
+}
 
 export function initMinigameHub(): void {
     hub = document.getElementById("minigameHub")!;
@@ -129,4 +140,5 @@ export function initMinigameHub(): void {
     renderList();
     updateStats(null);
     toggleButton.addEventListener("click", toggleHub);
+    setDeathReceivedHandler(handleDeathLink);
 }
